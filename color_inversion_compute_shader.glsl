@@ -25,7 +25,44 @@ void main() {
         return;
     }
 
-    vec4 color = imageLoad(u_input_texture, pixel_coord);
+    int downscale_factor = 32;
+    vec4 sum = vec4(0.0);
+    // Nearest neighbor power-of-2 downscale
+    // Note: Need to check to make sure the re-scaled pixels are still in bounds
+    // to account for images that are not perfect multiples of the downscale factor
+    ivec2 downscaled_pixel_coord = pixel_coord / downscale_factor;
+    for (int x = 0; x < downscale_factor; ++x) {
+        for (int y = 0; y < downscale_factor; ++y) {
+            ivec2 src_coord = downscaled_pixel_coord * downscale_factor + ivec2(x, y);
+            if (size.x <= src_coord.x || size.y <= src_coord.y) {
+                continue;
+            }
+
+            sum += imageLoad(u_input_texture, src_coord);
+        }
+    }
+
+    // Given a 33x33 image, the top left 32x32's
+    //  - scan_start will be (0,0)
+    //  - scan_limit will be (32,32)
+    //  - valid pixels will also be (32,32)
+    // The top right section will be 1 vertical strip of pixels and 31 "void" pixels
+    //  - scan_start will be (32,0)
+    //  - scan_limit will be (64,32)
+    //  - valid_pixels however will be (1,32) because size is (33,33)
+    // The bottom left would be the same as the top right, just x and y swapped
+    // The bottom right would be 1 singular pixel
+    //  - scan_start would be (32,32)
+    //  - scan_limit would be (64,64)
+    //  - valid_pixels would be (1,1)
+    ivec2 scan_start = downscaled_pixel_coord * downscale_factor;
+    ivec2 scan_limit = (ivec2(1) + downscaled_pixel_coord) * downscale_factor;
+    ivec2 valid_pixels = min(size, scan_limit) - scan_start;
+
+    // We sampled valid_pixels.x * valid_pixels.y, so we need to
+    // divide by that number to get the true average color
+    // e.g. if valid_pixels is (32,32) then we sampled 1024 pixels
+    vec4 color = sum / float(valid_pixels.x * valid_pixels.y);
     vec4 inverted_color = vec4(vec3(1.0) - color.xyz, color.w);
 
     imageStore(u_output_texture, pixel_coord, inverted_color);
