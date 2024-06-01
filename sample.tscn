@@ -1,0 +1,71 @@
+[gd_scene load_steps=3 format=3 uid="uid://b6kp777422klq"]
+
+[ext_resource type="Script" path="res://sample_ui.gd" id="1_wei7i"]
+[ext_resource type="Texture2D" uid="uid://b1thucg37d51o" path="res://logo_small_color_dark.png" id="2_2enk2"]
+
+[node name="SampleUI" type="CanvasLayer"]
+script = ExtResource("1_wei7i")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="In" type="CenterContainer" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/In"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/In/VBoxContainer"]
+layout_mode = 2
+text = "In"
+horizontal_alignment = 1
+
+[node name="Panel" type="PanelContainer" parent="VBoxContainer/HBoxContainer/In/VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/HBoxContainer/In/VBoxContainer/Panel"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+texture = ExtResource("2_2enk2")
+expand_mode = 3
+
+[node name="Out" type="CenterContainer" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/Out"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/Out/VBoxContainer"]
+layout_mode = 2
+text = "Out"
+horizontal_alignment = 1
+
+[node name="Panel" type="PanelContainer" parent="VBoxContainer/HBoxContainer/Out/VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/HBoxContainer/Out/VBoxContainer/Panel"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+expand_mode = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 256)
+layout_mode = 2
+
+[node name="ButtonRunShader" type="Button" parent="VBoxContainer/CenterContainer"]
+layout_mode = 2
+text = "Run Shader"
+
+[connection signal="pressed" from="VBoxContainer/CenterContainer/ButtonRunShader" to="." method="_on_button_run_shader_pressed"]
